@@ -1,5 +1,6 @@
 import { Resizable } from '@/components/Resizable'
 import Chat from '@/features/chat/Chat'
+import FichesPersos from '@/features/JDR/FichesPersos'
 import { Flex } from '@radix-ui/themes'
 
 function Home() {
@@ -8,6 +9,10 @@ function Home() {
       gap='8'
       width='100%'
       height='100%'>
+        <div>
+
+        <FichesPersos />
+        </div>
 
       <Resizable
         defaultSize={{ width: 550 }}

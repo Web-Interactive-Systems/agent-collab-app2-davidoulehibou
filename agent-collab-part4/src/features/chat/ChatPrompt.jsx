@@ -1,6 +1,6 @@
 import { onAgent } from '@/actions/agent'
 import { styled } from '@/lib/stitches'
-import { $chatAgents, $fichesPersos, $messages, addFiche, addMessage, updateMessages } from '@/store/store'
+import { $chatAgents, $messages, addFiche, addMessage, updateMessages } from '@/store/store'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import { Button, Flex, TextArea } from '@radix-ui/themes'
 import { useRef, useState } from 'react'
@@ -86,7 +86,6 @@ function ChatPrompt() {
 
     const steps = isEmpty(chatAgents) ? [null] : chatAgents
 
-    console.log("steps", steps)
 
     for (let i = 0, len = steps.length; i < len; i++) {
       const agent = steps[i]
@@ -118,9 +117,7 @@ function ChatPrompt() {
         console.log("last agent 1", last.content)
 
         const json = extractJSONString(last.content)
-         console.log("json ",json)
          addFiche(json)
-         console.log("json envoyé", $fichesPersos.get())
       }
 
       // add next prompt to chat
