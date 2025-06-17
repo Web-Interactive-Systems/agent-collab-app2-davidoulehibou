@@ -29,6 +29,7 @@ export const onAgent = async function ({
   prompt,
   canStream = true,
   contextInputs = [],
+  canThink = false,
 }) {
   const aiClient = await getAIClient()
 
@@ -38,6 +39,7 @@ export const onAgent = async function ({
 
   console.log('onAgent agent', agent)
   console.log('onAgent prompt', prompt)
+  console.log('contexte', contextInputs)
 
   agent.role = `${agent.role}
                 Respond in the same language of the user.
@@ -50,6 +52,15 @@ export const onAgent = async function ({
   if (agent.response_format === 'json') {
     agent.role += '\n Ouput: json \n  ```json ... ```'
   }
+
+  if(!canThink){
+    agent.role += '\n no_think'
+  }
+
+
+  console.log('onAgent agent', agent)
+  console.log('onAgent prompt', prompt)
+  console.log('contexte', contextInputs)
 
   try {
     const stream = await aiClient.openai.chat.completions.create({

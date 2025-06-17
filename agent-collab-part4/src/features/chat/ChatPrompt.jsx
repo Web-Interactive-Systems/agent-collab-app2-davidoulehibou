@@ -1,6 +1,6 @@
 import { onAgent } from '@/actions/agent'
 import { styled } from '@/lib/stitches'
-import { $chatAgents, $messages, addMessage, updateMessages } from '@/store/store'
+import { $chatAgents, $fichesPersos, $messages, addFiche, addMessage, updateMessages } from '@/store/store'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
 import { Button, Flex, TextArea } from '@radix-ui/themes'
 import { useRef, useState } from 'react'
@@ -8,6 +8,7 @@ import { AgentMenu } from './AgentMenu'
 import { AgentSelect } from './AgentSelect'
 import { useStore } from '@nanostores/react'
 import { isEmpty } from 'lodash'
+import { extractJSONString } from '@/lib/json'
 
 const PromptContainer = styled(Flex, {
   width: '100%',
@@ -40,7 +41,7 @@ function ChatPrompt() {
   const [isPromptEmpty, setIsPromptEmpty] = useState(true)
 
   const chatAgents = useStore($chatAgents)
-  const messages = useStore($messages)
+  //  const messages = useStore($messages)
 
   const onTextChange = () => {
     const val = promptRef.current.value || ''
@@ -51,13 +52,14 @@ function ChatPrompt() {
     const prompt = promptRef.current.value
     console.log('onSendPrompt', prompt)
 
-    const contextInputs = constructCtxArray(messages)
-
     addMessage({
       role: 'user',
       content: prompt,
       id: Math.random().toString(),
     })
+
+    const messages = $messages.get()
+    const contextInputs = constructCtxArray(messages)
 
     // AI response
     const response = {
@@ -70,7 +72,21 @@ function ChatPrompt() {
     // add AI response to chat messages
     addMessage(response)
 
+/*
+    console.log(contextInputs)
+    const stream = await onAgent({ prompt: prompt, contextInputs })
+
+    for await (const part of stream) {
+      const token = part.choices[0]?.delta?.content || ''
+
+      response.content = response.content + token
+
+      updateMessages([...messages, response])
+    } */
+
     const steps = isEmpty(chatAgents) ? [null] : chatAgents
+
+    console.log("steps", steps)
 
     for (let i = 0, len = steps.length; i < len; i++) {
       const agent = steps[i]
@@ -96,6 +112,15 @@ function ChatPrompt() {
       cloned[cloned.length - 1] = {
         ...last,
         completed: true,
+      }
+
+      if(agent.id === "1"){
+        console.log("last agent 1", last.content)
+
+        const json = extractJSONString(last.content)
+         console.log("json ",json)
+         addFiche(json)
+         console.log("json envoyé", $fichesPersos.get())
       }
 
       // add next prompt to chat
@@ -149,7 +174,8 @@ function ChatPrompt() {
             justify='start'
             align='center'
             width='100%'>
-            {/* TODO Add Agent Select Menu */}
+            <AgentMenu />
+            <AgentSelect />
           </Flex>
         </Flex>
         <Flex
