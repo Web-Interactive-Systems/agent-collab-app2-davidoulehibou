@@ -9,13 +9,14 @@ function Home() {
       gap='8'
       width='100%'
       height='100%'>
-        <div>
+        <div style={{padding:"1rem"}}>
 
         <FichesPersos />
         </div>
 
       <Resizable
-        defaultSize={{ width: 550 }}
+        defaultSize={{ width: 400 }}
+        
         class='resizable'
         style={{
           background: 'var(--focus-a3)',

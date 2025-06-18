@@ -74,7 +74,6 @@ function ChatList() {
       {messages.map((msg) => (
         <MessageWrapper key={`message-${msg.id}`}>
           <MessageBubble role={msg.role}>
-            <Avatar>{msg.role === 'assistant' ? '🤖' : '😀'}</Avatar>
             <Markdown content={msg.content || ''} />
           </MessageBubble>
         </MessageWrapper>

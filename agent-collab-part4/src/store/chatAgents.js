@@ -1,19 +1,15 @@
 import { atom, computed } from 'nanostores'
 import { $agents } from './agents'
 
-export const $selectedChatAgents = atom([])
+export const $selectedChatAgents = atom(['1'])
 
 export const $chatAgents = computed([$selectedChatAgents, $agents], (ids, agents) => {
-  return ids.map(id => agents.find(agent => agent.id === id)).filter(Boolean)
+  console.log($selectedChatAgents.get())
+  return ids.map((id) => agents.find((agent) => agent.id === id)).filter(Boolean)
 })
 
-export const selectChatAgent = (checked, id) => {
-  const selected = $selectedChatAgents.get()
-  if (checked) {
-    $selectedChatAgents.set([...selected, id])
-  } else {
-    $selectedChatAgents.set(selected.filter((e) => e !== id))
-  }
+export const selectChatAgent = (id) => {
+  $selectedChatAgents.set([id])
 }
 
 export const setSelectChatAgents = (ids) => {

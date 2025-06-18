@@ -5,8 +5,9 @@ import { styled } from '@/lib/stitches'
 const Container = styled('div', {
   width: '30rem',
   padding: '2rem',
-  borderRadius: '16px',
-  backgroundColor: 'white',
+  borderRadius: '2rem',
+  margin:'1rem',
+  backgroundColor: 'rgba(255, 255, 255, 0.36)',
   boxShadow: '0 8px 24px rgba(0, 0, 0, 0.08)',
   color: '#1a1a1a',
 })
@@ -103,9 +104,7 @@ const Fiche = ({ infos }) => {
           <TabTrigger value='notes'>Notes</TabTrigger>
         </TabList>
 
-        <TabContent
-          value='general'
-          padded>
+        <TabContent value='general'>
           <Box>
             <strong>Genre :</strong> {personnage.genre}
           </Box>
@@ -120,50 +119,47 @@ const Fiche = ({ infos }) => {
           </Box>
         </TabContent>
 
-        <TabContent
-          value='stats'
-          padded>
-          <SectionTitle>Caractéristiques</SectionTitle>
-          <List>
-            <Item>
-              <strong>Force :</strong> {caracteristiques.force}
-            </Item>
-            <Item>
-              <strong>Agilité :</strong> {caracteristiques.agilite}
-            </Item>
-            <Item>
-              <strong>Intelligence :</strong> {caracteristiques.intelligence}
-            </Item>
-            <Item>
-              <strong>Charisme :</strong> {caracteristiques.charisme}
-            </Item>
-            <Item>
-              <strong>Perception :</strong> {caracteristiques.perception}
-            </Item>
-          </List>
-          <Box>
-            <SectionTitle>Santé</SectionTitle>
+        <TabContent value='stats'>
+          
+            <List>
+              <SectionTitle>Caractéristiques</SectionTitle>
+              <Item>
+                <strong>Force :</strong> {caracteristiques.force}
+              </Item>
+              <Item>
+                <strong>Agilité :</strong> {caracteristiques.agilite}
+              </Item>
+              <Item>
+                <strong>Intelligence :</strong> {caracteristiques.intelligence}
+              </Item>
+              <Item>
+                <strong>Charisme :</strong> {caracteristiques.charisme}
+              </Item>
+              <Item>
+                <strong>Perception :</strong> {caracteristiques.perception}
+              </Item>
+            </List>
 
-            <Box>
-              <strong>PV :</strong> {sante.points_de_vie.actuels} /{' '}
-              {sante.points_de_vie.maximum}
-            </Box>
-            <Box>
-              <strong>Énergie :</strong> {sante.energie.actuelle} /{' '}
-              {sante.energie.maximum}
-            </Box>
-            <Box>
-              <strong>Armure :</strong> {sante.armure}
-            </Box>
-            <Box>
-              <strong>État / Blessures :</strong> {sante.etat_blessures}
-            </Box>
-          </Box>
+            <List>
+              <SectionTitle>Santé</SectionTitle>
+              <Item>
+                <strong>PV :</strong> {sante.points_de_vie.actuels} /{' '}
+                {sante.points_de_vie.maximum}
+              </Item>
+              <Item>
+                <strong>Énergie :</strong> {sante.energie.actuelle} /{' '}
+                {sante.energie.maximum}
+              </Item>
+              <Item>
+                <strong>Armure :</strong> {sante.armure}
+              </Item>
+              <Item>
+                <strong>État / Blessures :</strong> {sante.etat_blessures}
+              </Item>
+            </List>
         </TabContent>
 
-        <TabContent
-          value='skills'
-          padded>
+        <TabContent value='skills'>
           <SectionTitle>Compétences</SectionTitle>
           <List>
             {competences.map((c, i) => (
@@ -182,9 +178,7 @@ const Fiche = ({ infos }) => {
           ))}
         </TabContent>
 
-        <TabContent
-          value='equipment'
-          padded>
+        <TabContent value='equipment'>
           <Box>
             <strong>Armes :</strong> {equipement.armes.join(', ')}
           </Box>
@@ -199,9 +193,7 @@ const Fiche = ({ infos }) => {
           </Box>
         </TabContent>
 
-        <TabContent
-          value='notes'
-          padded>
+        <TabContent value='notes'>
           <Box>
             <strong>Objectifs :</strong> {objectifs}
           </Box>

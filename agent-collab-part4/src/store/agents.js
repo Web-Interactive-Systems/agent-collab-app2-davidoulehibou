@@ -5,10 +5,10 @@ export const $selectedAgentId = atom('')
 
 export const $agents = atom([
   {
-  id: "1",
-  emoji: '🥸',
-  title: 'Créateur de fiche de perso',
-  role: `You are a character creator AI.
+    id: '1',
+    emoji: '🥸',
+    title: 'Créateur de fiche de perso',
+    role: `You are a character creator AI.
 Your task is to generate characters for tabletop role-playing games (TTRPG) in JSON format.
 
 Always follow this exact JSON structure, and fill it with the user language:
@@ -18,7 +18,7 @@ Always follow this exact JSON structure, and fill it with the user language:
     "nom": "",
     "race": "",
     "classe": "",
-    "age": "",
+    "age": (int),
     "genre": "",
     "description_physique": "",
     "description_mentale": "",
@@ -65,18 +65,21 @@ Always follow this exact JSON structure, and fill it with the user language:
 }
 
 Only return the character as a valid JSON object in a code block: \`\`\`json ... \`\`\`. Do not include any explanation or extra text.`,
-  response_format: 'text',
-  temperature: 0.7,
-  desired_response: 'A filled-out character in valid JSON format using the provided template.'
-  },
-  {
-    id: Math.random().toString(),
-    emoji: '🌐',
-    title: "Créateur d'univers",
-    role: 'You can create a fictional world with given properties',
     response_format: 'text',
     temperature: 0.7,
-    desired_response: 'name, political state, ',
+    desired_response:
+      'A filled-out character in valid JSON format using the provided template.',
+  },
+  {
+    id: '2',
+    emoji: '🤵',
+    title: 'MJ',
+    role: `Tu es le maitre du jeu d'un jeu de rôle,
+    Lors du message qui ressembliera à : "Bonjour, commence une histoire", réponds en mettant en place un univers fictif fantastique en expliquant les enjeux
+    pour les autre messages, des actions de personnages te seront données, réponds en expliquant ce qu'elles impliquent`,
+    response_format: 'text',
+    temperature: 0.7,
+    desired_response: '',
   },
   {
     id: Math.random().toString(),
@@ -85,7 +88,8 @@ Only return the character as a valid JSON object in a code block: \`\`\`json ...
     role: 'You create a fictionnal story with the given character and world',
     response_format: 'text',
     temperature: 0.7,
-    desired_response: 'a short fictionnal story with challenges and an end (happy or sad) ',
+    desired_response:
+      'a short fictionnal story with challenges and an end (happy or sad) ',
   },
 ])
 

@@ -1,11 +1,18 @@
 import { onAgent } from '@/actions/agent'
 import { styled } from '@/lib/stitches'
-import { $chatAgents, $messages, addFiche, addMessage, updateMessages } from '@/store/store'
+import {
+  $chatAgents,
+  $fichesPersos,
+  $messages,
+  $selectedChatAgents,
+  addFiche,
+  addMessage,
+  selectChatAgent,
+  updateMessages,
+} from '@/store/store'
 import { PaperPlaneIcon } from '@radix-ui/react-icons'
-import { Button, Flex, TextArea } from '@radix-ui/themes'
-import { useRef, useState } from 'react'
-import { AgentMenu } from './AgentMenu'
-import { AgentSelect } from './AgentSelect'
+import { Button, DropdownMenu, Flex, TextArea } from '@radix-ui/themes'
+import { useEffect, useRef, useState } from 'react'
 import { useStore } from '@nanostores/react'
 import { isEmpty } from 'lodash'
 import { extractJSONString } from '@/lib/json'
@@ -28,25 +35,34 @@ const PromptArea = styled(TextArea, {
   },
 })
 
-function constructCtxArray(originalArray) {
-  const result = []
-  if (originalArray.length > 3) result.push(originalArray.at(-3), originalArray.at(-2))
-  if (originalArray.length > 1) result.push(originalArray[1])
-  if (originalArray.length > 0) result.push(originalArray[0])
-  return result
-}
-
 function ChatPrompt() {
   const promptRef = useRef(null)
   const [isPromptEmpty, setIsPromptEmpty] = useState(true)
 
+  const [contexte, setContexte] = useState('')
+
   const chatAgents = useStore($chatAgents)
-  //  const messages = useStore($messages)
+
+  const fichesPersos = useStore($fichesPersos)
+  const [persoId, setPersoId] = useState(0)
+  const [utils, setUtils] = useState('Rien')
+  const [caracterisique, setCaracterisique] = useState('force')
 
   const onTextChange = () => {
     const val = promptRef.current.value || ''
     setIsPromptEmpty(val.trim().length === 0)
   }
+
+  function startStory() {
+    selectChatAgent('2')
+  }
+
+  useEffect(() => {
+    if ($selectedChatAgents.get()[0] === '2') {
+      promptRef.current.value = 'Bonjour, commence une histoire'
+      onSendPrompt()
+    }
+  }, [chatAgents])
 
   const onSendPrompt = async () => {
     const prompt = promptRef.current.value
@@ -58,8 +74,7 @@ function ChatPrompt() {
       id: Math.random().toString(),
     })
 
-    const messages = $messages.get()
-    const contextInputs = constructCtxArray(messages)
+    const contextInputs = [{ role: "assistant", content: contexte }]
 
     // AI response
     const response = {
@@ -72,27 +87,14 @@ function ChatPrompt() {
     // add AI response to chat messages
     addMessage(response)
 
-/*
-    console.log(contextInputs)
-    const stream = await onAgent({ prompt: prompt, contextInputs })
-
-    for await (const part of stream) {
-      const token = part.choices[0]?.delta?.content || ''
-
-      response.content = response.content + token
-
-      updateMessages([...messages, response])
-    } */
-
     const steps = isEmpty(chatAgents) ? [null] : chatAgents
-
 
     for (let i = 0, len = steps.length; i < len; i++) {
       const agent = steps[i]
 
       let cloned = $messages.get()
 
-      // call agent
+      console.log('contexte', contexte)
       const stream = await onAgent({ prompt: prompt, agent, contextInputs })
       for await (const part of stream) {
         const token = part.choices[0]?.delta?.content || ''
@@ -113,11 +115,13 @@ function ChatPrompt() {
         completed: true,
       }
 
-      if(agent.id === "1"){
-        console.log("last agent 1", last.content)
+      if (agent.id === '1') {
+        console.log('last agent 1', last.content)
 
         const json = extractJSONString(last.content)
-         addFiche(json)
+        addFiche(json)
+      } else if (agent.id === '2') {
+        setContexte(contexte + last.content)
       }
 
       // add next prompt to chat
@@ -147,11 +151,38 @@ function ChatPrompt() {
       width='100%'>
       <PromptContainer
         align='center'
-        direction='column'>
+        direction='column'
+        width='90%'>
+        {chatAgents[0].id == 2 && (
+          <>
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <Button variant='soft'>
+                  {fichesPersos[persoId].personnage.nom}
+                  <DropdownMenu.TriggerIcon />
+                </Button>
+              </DropdownMenu.Trigger>
+
+              <DropdownMenu.Content>
+                {fichesPersos.map((fiche, index) => (
+                  <DropdownMenu.Item
+                    key={index}
+                    onSelect={() => setPersoId(index)}>
+                    {fiche.personnage.nom}
+                  </DropdownMenu.Item>
+                ))}
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          </>
+        )}
         <PromptArea
           ref={promptRef}
           id='Todo'
-          placeholder='Comment puis-je aider...'
+          placeholder={
+            chatAgents[0].id == 1
+              ? 'Décrivez votre personnage'
+              : 'Décrivez une action à effectuer'
+          }
           onChange={onTextChange}
           onKeyDown={(e) => {
             const canSend = !isPromptEmpty && e.key === 'Enter'
@@ -170,19 +201,130 @@ function ChatPrompt() {
           <Flex
             justify='start'
             align='center'
-            width='100%'>
-            <AgentMenu />
-            <AgentSelect />
-          </Flex>
+            width='100%'></Flex>
         </Flex>
-        <Flex
-          justify='end'
-          width='100%'>
+        <Flex width='100%'>
+          {chatAgents[0].id == 2 && (
+            <>
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <Button variant='soft'>
+                    Avec {utils}
+                    <DropdownMenu.TriggerIcon />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Sub>
+                    <DropdownMenu.SubTrigger>Equipement</DropdownMenu.SubTrigger>
+
+                    <DropdownMenu.SubContent>
+                      <DropdownMenu.Sub>
+                        <DropdownMenu.SubTrigger>Armes</DropdownMenu.SubTrigger>
+
+                        <DropdownMenu.SubContent>
+                          {fichesPersos[persoId].equipement.armes.map((arme) => (
+                            <DropdownMenu.Item onSelect={() => setUtils(arme)}>
+                              {arme}
+                            </DropdownMenu.Item>
+                          ))}
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Sub>
+
+                      <DropdownMenu.Sub>
+                        <DropdownMenu.SubTrigger>Armures</DropdownMenu.SubTrigger>
+
+                        <DropdownMenu.SubContent>
+                          {fichesPersos[persoId].equipement.armures.map((armure) => (
+                            <DropdownMenu.Item onSelect={() => setUtils(armure)}>
+                              {armure}
+                            </DropdownMenu.Item>
+                          ))}
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Sub>
+
+                      <DropdownMenu.Sub>
+                        <DropdownMenu.SubTrigger>Objets</DropdownMenu.SubTrigger>
+
+                        <DropdownMenu.SubContent>
+                          {fichesPersos[persoId].equipement.objets.map((objet) => (
+                            <DropdownMenu.Item onSelect={() => setUtils(objet)}>
+                              {objet}
+                            </DropdownMenu.Item>
+                          ))}
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Sub>
+
+                      <DropdownMenu.Sub>
+                        <DropdownMenu.SubTrigger>Resources</DropdownMenu.SubTrigger>
+
+                        <DropdownMenu.SubContent>
+                          {fichesPersos[persoId].equipement.objets.map((resources) => (
+                            <DropdownMenu.Item onSelect={() => setUtils(resources)}>
+                              {resources}
+                            </DropdownMenu.Item>
+                          ))}
+                        </DropdownMenu.SubContent>
+                      </DropdownMenu.Sub>
+                    </DropdownMenu.SubContent>
+                  </DropdownMenu.Sub>
+
+                  <DropdownMenu.Separator />
+                  <DropdownMenu.Sub>
+                    <DropdownMenu.SubTrigger>Pouvoirs / Dons</DropdownMenu.SubTrigger>
+                    <DropdownMenu.SubContent>
+                      {fichesPersos[persoId].pouvoirs_dons.map((pouvoir) => (
+                        <DropdownMenu.Item onSelect={() => setUtils(pouvoir.nom)}>
+                          {pouvoir.nom}
+                        </DropdownMenu.Item>
+                      ))}
+                    </DropdownMenu.SubContent>
+                  </DropdownMenu.Sub>
+                  <DropdownMenu.Item onSelect={() => setUtils('Rien')}>
+                    Rien
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  <Button variant='soft'>
+                    Jet De {caracterisique}
+                    <DropdownMenu.TriggerIcon />
+                  </Button>
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content>
+                  <DropdownMenu.Item onSelect={() => setCaracterisique('Force')}>
+                    Force
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={() => setCaracterisique('Agilité')}>
+                    Agilité
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={() => setCaracterisique('Intelligence')}>
+                    Intelligence
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={() => setCaracterisique('Charisme')}>
+                    Charisme
+                  </DropdownMenu.Item>
+                  <DropdownMenu.Item onSelect={() => setCaracterisique('Perception')}>
+                    Perception
+                  </DropdownMenu.Item>
+                </DropdownMenu.Content>
+              </DropdownMenu.Root>
+            </>
+          )}
+
           <Button
             disabled={isPromptEmpty}
             onClick={onSendPrompt}>
             <PaperPlaneIcon />
           </Button>
+          {chatAgents[0].id == 1 && (
+            <Button
+              disabled={fichesPersos.length < 2}
+              onClick={() => startStory()}>
+              Commencer l'histoire
+            </Button>
+          )}
         </Flex>
       </PromptContainer>
     </Flex>
