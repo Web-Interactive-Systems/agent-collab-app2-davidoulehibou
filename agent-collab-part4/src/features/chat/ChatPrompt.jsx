@@ -16,6 +16,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useStore } from '@nanostores/react'
 import { isEmpty } from 'lodash'
 import { extractJSONString } from '@/lib/json'
+import personnagesToString from '@/lib/fichestostring'
 
 const PromptContainer = styled(Flex, {
   width: '100%',
@@ -74,7 +75,16 @@ function ChatPrompt() {
       id: Math.random().toString(),
     })
 
-    const contextInputs = [{ role: "assistant", content: contexte }]
+    const contextInputs = [
+      {
+        role: 'user',
+        content: chatAgents[0].id == 2 ? personnagesToString(fichesPersos) : "",
+      },
+      {
+        role: 'assistant',
+        content: contexte,
+      },
+    ]
 
     // AI response
     const response = {
