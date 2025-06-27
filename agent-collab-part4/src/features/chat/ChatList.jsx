@@ -14,8 +14,8 @@ const fadeInUp = keyframes({
 const ChatContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
+  height: "100vh",
   gap: '0.75rem',
-  height: 'calc(100vh - 200px)',
   overflowY: 'auto',
   padding: '1rem',
   backgroundColor: 'var(--gray-2)',

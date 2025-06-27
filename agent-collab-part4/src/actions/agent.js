@@ -37,10 +37,6 @@ export const onAgent = async function ({
     agent = aiClient.cfg
   }
 
-  console.log('onAgent agent', agent)
-  console.log('onAgent prompt', prompt)
-  console.log('contexte', contextInputs)
-
   agent.role = `${agent.role}
                 Respond in the same language of the user.
                 Be to the point, and do not add any fluff.`
@@ -56,11 +52,6 @@ export const onAgent = async function ({
   if(!canThink){
     agent.role += '\n no_think'
   }
-
-
-  console.log('onAgent agent', agent)
-  console.log('onAgent prompt', prompt)
-  console.log('contexte', contextInputs)
 
   try {
     const stream = await aiClient.openai.chat.completions.create({

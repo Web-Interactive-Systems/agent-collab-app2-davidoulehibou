@@ -7,7 +7,7 @@ function FichesPersos() {
 
   return (
     <>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxHeight:'90vh', overflowY:"auto", overflowX:'hidden', backgroundColor:'grey' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxHeight:'90vh', overflowY:"auto", overflowX:'hidden', backgroundColor:'rgb(174, 255, 178)', borderRadius:'1rem' }}>
         <h2>Fiches persos</h2>
         {fichesPersos.map((fiche) => (
           <Fiche

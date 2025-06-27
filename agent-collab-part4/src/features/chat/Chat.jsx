@@ -11,7 +11,7 @@ function Chat() {
       height='100%'
       p='1'>
       <ChatList />
-      <ChatPrompt />
+      
     </Flex>
   )
 }

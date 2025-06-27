@@ -1,5 +1,6 @@
 import { Resizable } from '@/components/Resizable'
 import Chat from '@/features/chat/Chat'
+import ChatPrompt from '@/features/chat/ChatPrompt'
 import FichesPersos from '@/features/JDR/FichesPersos'
 import { Flex } from '@radix-ui/themes'
 
@@ -9,15 +10,16 @@ function Home() {
       gap='8'
       width='100%'
       height='100%'>
-        <div style={{padding:"1rem"}}>
+        <div style={{padding:"1rem", display:"grid", gridTemplateColumns:"1fr 1fr", gap:"1rem"}}>
 
         <FichesPersos />
+        <ChatPrompt />
         </div>
 
       <Resizable
         defaultSize={{ width: 400 }}
         
-        class='resizable'
+        className='resizable'
         style={{
           background: 'var(--focus-a3)',
           borderLeft: '1px solid var(--gray-9)',

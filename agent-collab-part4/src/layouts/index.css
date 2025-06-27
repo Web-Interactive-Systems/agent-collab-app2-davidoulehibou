@@ -8,3 +8,10 @@ body {
 button {
   outline: none !important;
 }
+.chipSelected{
+  background-color: rgb(176, 217, 245);
+}
+
+h3{
+  margin:0.5rem
+}

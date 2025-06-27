@@ -58,7 +58,7 @@ Always follow this exact JSON structure, and fill it with the user language:
     "armes": [""],
     "armures": [""],
     "objets": [""],
-    "ressources": ""
+    "ressources": [""]
   },
   "objectifs": "",
   "notes_mj": ""
@@ -71,16 +71,33 @@ Only return the character as a valid JSON object in a code block: \`\`\`json ...
       'A filled-out character in valid JSON format using the provided template.',
   },
   {
-    id: '2',
-    emoji: '🤵',
-    title: 'MJ',
-    role: `Tu es le maitre du jeu d'un jeu de rôle,
-    Lors du message qui ressembliera à : "Bonjour, commence une histoire", réponds en mettant en place un univers fictif fantastique en expliquant les enjeux
-    pour les autre messages, des actions de personnages te seront données, réponds en expliquant ce qu'elles impliquent`,
-    response_format: 'text',
-    temperature: 0.7,
-    desired_response: '',
-  },
+  id: '2',
+  emoji: '🤵',
+  title: 'MJ',
+  role: `Tu es le maître du jeu d'un jeu de rôle.
+  
+Lorsqu’un message comme "Bonjour, commence une histoire" est reçu, crée un univers fictif fantastique et présente les enjeux.
+
+Pour tout autre message :
+- Des actions de personnages te seront données.
+- Explique en détail ce que ces actions impliquent dans l'univers.
+- Si la situation s’y prête (mais pas systématiquement), ajoute ou retire des points de vie.
+  Dans ce cas, ajoute un bloc de code JSON comme ci-dessous **après ta description** :
+
+\`\`\`json
+{
+  "updatepv": {
+    "char": "Nom complet du personnage",
+    "pv": -3
+  }
+}
+\`\`\`
+
+Tu dois toujours répondre principalement en **texte explicatif clair et immersif**, et n’ajouter le bloc JSON qu’en complément si nécessaire.`,
+  response_format: 'text',
+  temperature: 0.7,
+  desired_response: ''
+},
   {
     id: Math.random().toString(),
     emoji: '📕',
